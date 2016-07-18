@@ -15,9 +15,8 @@ namespace ExcelImageBits
 
         private void MainRibbon_Load(object sender, RibbonUIEventArgs e)
         {
-            //TODO:サイズ上限の判定
             //TODO:透過部分の判定(元からの色とのマージ)
-            //TODO:描画オフ
+            //TODO:描画オフチェックボックスで判定
             //TODO:BGWorker対応
 
             setEvent();
@@ -31,21 +30,26 @@ namespace ExcelImageBits
         private void getImageFilePath(object sender, RibbonControlEventArgs e)
         {
             this.openFileDialog.CheckFileExists = true;
-            FileInfo file;
-
-            if (this.openFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                file = new FileInfo(this.openFileDialog.FileName);
-            }
-            else
+            if (this.openFileDialog.ShowDialog() != DialogResult.OK)
             {
                 return;
             }
 
-            this._image = new Actor.ImageActor(file);
+            this._image = new Actor.ImageActor(this.openFileDialog.FileName);
+            if (!this._image.InRangeSize)
+            {
+                MessageBox.Show("画像が大きすぎます。");
+                return;
+            }
 
             Actor.ExcelActor.setExcelBits(this._image.Image.Size);
+            createImageBits();
 
+            MessageBox.Show("完了");
+        }
+
+        private void createImageBits()
+        {
             for (int y = 0; y < this._image.Image.Size.Height; y++)
             {
                 for (int x = 0; x < this._image.Image.Size.Width; x++)
@@ -59,8 +63,6 @@ namespace ExcelImageBits
                     Actor.ExcelActor.setExcelBitsColor(x, y, color);
                 }
             }
-
-            MessageBox.Show("完了");
         }
 
 

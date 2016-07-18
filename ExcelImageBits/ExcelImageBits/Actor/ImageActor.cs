@@ -10,13 +10,26 @@ namespace ExcelImageBits.Actor
 {
     class ImageActor
     {
-        public FileInfo ImageFile { get; private set; }
+        public string ImageFile { get; private set; }
         public Image Image { get; private set; }
 
-        public ImageActor(FileInfo path)
+        public ImageActor(string path)
         {
             this.ImageFile = path;
-            this.Image = Bitmap.FromFile(this.ImageFile.FullName);
+            this.Image = Bitmap.FromFile(this.ImageFile);
+        }
+
+        public bool InRangeSize
+        {
+            get
+            {
+                if (this.Image.Size.Width <= 16384 && this.Image.Size.Height <= 1048576)
+                {
+                    return true;
+                }
+
+                return false;
+            }
         }
 
         public Color getBitColor(int x, int y)
